@@ -5,6 +5,19 @@ const INSERTED_WIKILINK_QUERY = '[[Mana'
 const INSERTED_WIKILINK_TITLE = 'Manage Sponsorships'
 const INSERTED_WIKILINK_TARGET = 'manage-sponsorships'
 
+async function openSourceNote(page: Page) {
+  await page.getByTitle('Search notes').click()
+  await page.getByPlaceholder('Search notes...').fill(SOURCE_NOTE_TITLE)
+  const noteTitle = page
+    .getByTestId('note-list-container')
+    .getByTestId('note-title-row')
+    .filter({ hasText: SOURCE_NOTE_TITLE })
+    .first()
+  await expect(noteTitle).toBeVisible({ timeout: 5000 })
+  await noteTitle.click()
+  await expect(page.locator('.bn-editor h1').first()).toHaveText(SOURCE_NOTE_TITLE, { timeout: 5000 })
+}
+
 async function insertWikilink(page: Page) {
   const editor = page.locator('.bn-editor')
   await expect(editor).toBeVisible({ timeout: 5000 })
@@ -43,11 +56,7 @@ test.describe('Wikilink insertion and navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/api/vault/ping', route => route.fulfill({ status: 503 }))
     await page.goto('/')
-    await page.waitForTimeout(500)
-
-    const noteItem = page.locator('.app__note-list .cursor-pointer').filter({ hasText: SOURCE_NOTE_TITLE }).first()
-    await noteItem.click()
-    await page.waitForTimeout(1000)
+    await openSourceNote(page)
   })
 
   test('[[ autocomplete inserts wikilink that is not broken', async ({ page }) => {
