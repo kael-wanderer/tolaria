@@ -355,6 +355,8 @@ tolaria/
 |------|---------------|
 | `src/index.css` | Semantic CSS custom properties for app-owned light/dark themes; System mode resolves to one of these at runtime. |
 | `src/theme.json` | Editor-specific typography theme (fonts, headings, lists, code blocks). |
+| `src/customization/customAppearance.ts` | Local-only customization storage, theme presets, custom font parsing, and Sidebar / Note list / Editor font-size variables. |
+| `src/customization/CustomizationSettingsSection.tsx` | Dedicated Settings section for local appearance customization. |
 
 ### Settings & Config
 

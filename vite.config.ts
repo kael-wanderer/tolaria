@@ -948,6 +948,22 @@ export default defineConfig({
     minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
     // Produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
+    // Tolaria intentionally ships heavy editor, drawing, and diagramming
+    // runtimes. Keep the warning gate above the known production chunk size so
+    // local release builds only flag unexpected growth.
+    chunkSizeWarningLimit: 6000,
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        if (
+          warning.code === 'DYNAMIC_IMPORT_WILL_NOT_MOVE_MODULE'
+          && warning.message.includes('@tauri-apps/api/core')
+        ) {
+          return
+        }
+
+        defaultHandler(warning)
+      },
+    },
   },
 
   test: {

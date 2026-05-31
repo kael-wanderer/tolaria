@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import { isTauri } from '../mock-tauri'
 import { getAiAgentDefinition, type AiAgentId } from '../lib/aiAgents'
 import {
@@ -93,7 +94,6 @@ export async function streamAiAgent(
     return
   }
 
-  const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
   const eventName = createScopedStreamEventName('ai-agent-stream')
   let closed = false

@@ -496,6 +496,7 @@ The app uses internal app-owned light and dark themes with an optional System pr
 1. **Global CSS variables** (`src/index.css`): Semantic app colors, borders, surfaces, and interaction states. Bridged to Tailwind v4 via `@theme inline`.
 2. **Editor theme** (`src/theme.json`): BlockNote-specific typography. Flattened to CSS vars by `useEditorTheme`; editor colors resolve through the same semantic app variables.
 3. **Theme runtime**: Applies resolved `light` / `dark` values to `data-theme` and the shadcn-compatible `.dark` class before React consumers render, with a localStorage mirror to avoid startup flash when dark mode or System-on-dark is selected. Settings and command-palette theme actions both write the same installation-local `settings.theme_mode` value; `system` subscribes to `prefers-color-scheme` changes at runtime while explicit Light/Dark remain overrides.
+4. **Local customization overlay** (`src/customization/`): Fork-local appearance presets and personal font controls are stored in localStorage, not in vault files. The overlay can set app semantic color variables, editor font variables, and separate font-size variables for Sidebar, Note list, and Editor. See [CUSTOMIZATION.md](./CUSTOMIZATION.md).
 
 ## Localization
 

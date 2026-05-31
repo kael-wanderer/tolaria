@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import { isTauri } from '../mock-tauri'
 import { writeClipboardText } from './clipboardText'
 
@@ -88,7 +89,6 @@ export async function openExternalUrl(url: ExternalUrlCandidate): Promise<void> 
 /** Open a local file path with the system default app (e.g. TextEdit for .json). */
 export async function openLocalFile(absolutePath: AbsoluteFilePath, vaultPath?: AbsoluteFilePath): Promise<void> {
   if (isTauri()) {
-    const { invoke } = await import('@tauri-apps/api/core')
     const args: { path: string; vaultPath?: string } = { path: absolutePath }
     if (vaultPath) args.vaultPath = vaultPath
     await invoke('open_vault_file_external', args)

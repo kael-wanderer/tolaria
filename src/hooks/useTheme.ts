@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import { customAppearanceEditorCssVars } from '../customization/customAppearance'
+import { useCustomAppearanceSettings } from '../customization/useCustomAppearance'
 import themeConfig from '../theme.json'
 
 type ThemeValue = string | number | Record<string, unknown> | unknown[]
@@ -48,13 +50,17 @@ function camelToKebab(str: string): string {
 }
 
 export function useEditorTheme() {
+  const [customAppearance] = useCustomAppearanceSettings()
   const { cssVars, styleString } = useMemo(() => {
-    const vars = flattenTheme(themeConfig as Record<string, ThemeValue>)
+    const vars = {
+      ...flattenTheme(themeConfig as Record<string, ThemeValue>),
+      ...customAppearanceEditorCssVars(customAppearance),
+    }
     const str = Object.entries(vars)
       .map(([k, v]) => `${k}: ${v};`)
       .join('\n')
     return { cssVars: vars, styleString: str }
-  }, [])
+  }, [customAppearance])
 
   return { themeConfig, cssVars, styleString }
 }

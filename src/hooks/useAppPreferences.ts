@@ -12,6 +12,7 @@ import { DEFAULT_DATE_DISPLAY_FORMAT, normalizeDateDisplayFormat, type DateDispl
 import { resolveAllNotesFileVisibility } from '../utils/allNotesFileVisibility'
 import { useAiAgentPreferences } from './useAiAgentPreferences'
 import type { AiAgentsStatus } from '../lib/aiAgents'
+import { useCustomAppearanceRuntime } from '../customization/useCustomAppearance'
 import { useDocumentThemeMode } from './useDocumentThemeMode'
 import { useTelemetry } from './useTelemetry'
 import { useThemeMode } from './useThemeMode'
@@ -79,6 +80,7 @@ export function useAppPreferences({
   }, [appLocale])
 
   useThemeMode(settings.theme_mode, settingsLoaded)
+  useCustomAppearanceRuntime(settings.theme_mode)
   const documentThemeMode = useDocumentThemeMode()
   const handleToggleThemeMode = useCallback(() => {
     const theme_mode = documentThemeMode === 'dark' ? 'light' : 'dark'

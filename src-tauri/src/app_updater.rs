@@ -9,6 +9,7 @@ const GITHUB_RELEASES_API_URL: &str =
 const RELEASES_BASE_URL: &str = "https://refactoringhq.github.io/tolaria";
 const UPDATER_HTTP_TIMEOUT: Duration = Duration::from_secs(5);
 const UPDATER_USER_AGENT: &str = concat!("Tolaria/", env!("CARGO_PKG_VERSION"));
+const APP_UPDATES_ENABLED: bool = false;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -224,6 +225,10 @@ pub async fn check_for_app_update<R: Runtime>(
     app_handle: AppHandle<R>,
     release_channel: Option<String>,
 ) -> Result<Option<AppUpdateMetadata>, String> {
+    if !APP_UPDATES_ENABLED {
+        return Ok(None);
+    }
+
     let channel = ReleaseChannel::from_settings_value(release_channel.as_deref());
     let updater = build_updater(&app_handle, updater_endpoint(channel).await?)?;
     let update = updater
@@ -240,6 +245,10 @@ pub async fn download_and_install_app_update<R: Runtime>(
     expected_version: String,
     on_event: Channel<AppUpdateDownloadEvent>,
 ) -> Result<(), String> {
+    if !APP_UPDATES_ENABLED {
+        return Err("App updates are disabled in this local build".to_string());
+    }
+
     let channel = ReleaseChannel::from_settings_value(release_channel.as_deref());
     let updater = build_updater(&app_handle, updater_endpoint(channel).await?)?;
     let update = updater

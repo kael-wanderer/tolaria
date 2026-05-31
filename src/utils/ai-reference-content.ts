@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import { isTauri, mockInvoke } from '../mock-tauri'
 import type { NoteReference } from './ai-context'
 
@@ -7,7 +8,6 @@ async function readNoteContent(path: string): Promise<string | null> {
       return await mockInvoke<string>('get_note_content', { path })
     }
 
-    const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('get_note_content', { path })
   } catch {
     return null

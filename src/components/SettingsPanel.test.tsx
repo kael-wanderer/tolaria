@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { SettingsPanel } from './SettingsPanel'
 import type { Settings } from '../types'
+import { CUSTOM_APPEARANCE_STORAGE_KEY } from '../customization/customAppearance'
 import { THEME_MODE_STORAGE_KEY } from '../lib/themeMode'
 import type { AiAgentsStatus } from '../lib/aiAgents'
 import type { VaultOption } from './StatusBar'
@@ -422,6 +423,77 @@ describe('SettingsPanel', () => {
     expect(screen.getByRole('radio', { name: 'Light' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByRole('radio', { name: 'Dark' })).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('radio', { name: 'System' })).toHaveAttribute('aria-checked', 'false')
+  })
+
+  it('renders the local customization section and saves its choices locally', () => {
+    renderOpenSettings()
+
+    expect(screen.getAllByText('Customization').length).toBeGreaterThan(0)
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-theme'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Everforest Dark' }))
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-font'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Iosevka Nerd Font Mono' }))
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-editor-font-size'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: '16px' }))
+
+    expect(JSON.parse(window.localStorage.getItem(CUSTOM_APPEARANCE_STORAGE_KEY) ?? '{}')).toEqual({
+      themeId: 'everforest-dark',
+      customTheme: '',
+      fontId: 'iosevka-nerd-font-mono',
+      customFontFamily: '',
+      sidebarFontSize: null,
+      sidebarFontSizeMode: 'default',
+      noteListFontSize: null,
+      noteListFontSizeMode: 'default',
+      editorFontSize: 16,
+      editorFontSizeMode: 'preset',
+    })
+    expect(document.documentElement).toHaveAttribute('data-custom-theme', 'everforest-dark')
+  })
+
+  it('keeps custom appearance inputs visible while users type custom values', () => {
+    renderOpenSettings()
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-theme'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Custom' }))
+    const themeInput = screen.getByTestId('settings-custom-theme-input')
+    fireEvent.change(themeInput, { target: { value: 'Tokyo Night' } })
+    expect(themeInput).toHaveValue('Tokyo Night')
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-font'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Custom' }))
+    const fontInput = screen.getByTestId('settings-custom-font-input')
+    fireEvent.change(fontInput, { target: { value: 'Berkeley Mono' } })
+    expect(fontInput).toHaveValue('Berkeley Mono')
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-sidebar-font-size'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: '22px' }))
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-note-list-font-size'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Custom' }))
+    const noteListSizeInput = screen.getByTestId('settings-custom-note-list-font-size-input')
+    fireEvent.change(noteListSizeInput, { target: { value: '24' } })
+    expect(noteListSizeInput).toHaveValue(24)
+
+    fireEvent.pointerDown(screen.getByTestId('settings-custom-editor-font-size'), { button: 0, pointerType: 'mouse' })
+    fireEvent.click(screen.getByRole('option', { name: 'Custom' }))
+    const sizeInput = screen.getByTestId('settings-custom-editor-font-size-input')
+    fireEvent.change(sizeInput, { target: { value: '30' } })
+    expect(sizeInput).toHaveValue(30)
+
+    expect(JSON.parse(window.localStorage.getItem(CUSTOM_APPEARANCE_STORAGE_KEY) ?? '{}')).toMatchObject({
+      themeId: 'custom',
+      customTheme: 'Tokyo Night',
+      fontId: 'custom',
+      customFontFamily: 'Berkeley Mono',
+      sidebarFontSize: 22,
+      sidebarFontSizeMode: 'preset',
+      noteListFontSize: 24,
+      noteListFontSizeMode: 'custom',
+      editorFontSize: 30,
+      editorFontSizeMode: 'custom',
+    })
   })
 
   it('defaults the language selector to system language', () => {

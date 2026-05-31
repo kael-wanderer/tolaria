@@ -45,6 +45,7 @@ import { shouldHideGitignoredFiles } from '../lib/gitignoredVisibility'
 import { areGitFeaturesEnabled } from '../lib/gitSettings'
 import { areAiFeaturesEnabled } from '../lib/aiFeatures'
 import { trackAllNotesVisibilityChanged } from '../lib/productAnalytics'
+import { CustomizationSettingsSection } from '../customization/CustomizationSettingsSection'
 import { AiProviderSettings } from './AiProviderSettings'
 import { AiAgentIcon } from './AiAgentIcon'
 import { GitSettingsSection } from './GitSettingsSection'
@@ -693,6 +694,10 @@ function SettingsSyncAndAppearanceSections({
             setUiLanguage={setUiLanguage}
           />
         </SettingsGroup>
+      </SettingsSection>
+      <SettingsSection id={SETTINGS_SECTION_IDS.customization}>
+        <SectionHeading title={t('settings.customization.title')} />
+        <CustomizationSettingsSection t={t} />
       </SettingsSection>
     </>
   )

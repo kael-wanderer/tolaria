@@ -733,6 +733,7 @@ The app uses internal light and dark themes owned by Tolaria, with System as an 
 2. **Editor theme** (`src/theme.json`): BlockNote typography, flattened to CSS vars by `useEditorTheme`
 3. **Runtime theme bridge**: Resolves the selected preference to `light` / `dark`, applies `data-theme` and `.dark` for shadcn/ui, and subscribes to `prefers-color-scheme` while System is selected
 4. **Theme mode commands**: Command-palette actions for Light, Dark, and System call the same `saveSettings` path as the Settings panel and persist only `settings.theme_mode`
+5. **Local customization overlay**: `src/customization/customAppearance.ts` normalizes local theme/font settings, applies custom app theme variables to the document, exports editor typography overrides for `useEditorTheme`, and owns the Sidebar / Note list / Editor font-size split. The Settings UI lives in `src/customization/CustomizationSettingsSection.tsx`; behavior is documented in [CUSTOMIZATION.md](./CUSTOMIZATION.md).
 
 ## Localization
 

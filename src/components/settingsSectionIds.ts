@@ -3,6 +3,7 @@ export const SETTINGS_SECTION_IDS = {
   workspaces: 'settings-section-workspaces',
   autogit: 'settings-section-autogit',
   appearance: 'settings-section-appearance',
+  customization: 'settings-section-customization',
   content: 'settings-section-content',
   ai: 'settings-section-ai',
   workflow: 'settings-section-workflow',

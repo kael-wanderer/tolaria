@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { invoke } from '@tauri-apps/api/core'
 import { isTauri } from '../mock-tauri'
 import {
   APP_COMMAND_EVENT_NAME,
@@ -58,8 +59,7 @@ function createWindowCommandListener(
 function syncNativeMenuState(state: MenuStatePayload): void {
   if (!isTauri()) return
 
-  import('@tauri-apps/api/core')
-    .then(({ invoke }) => invoke('update_menu_state', { state }))
+  invoke('update_menu_state', { state })
     .catch((err) => console.warn('[menu] Failed to sync native menu state:', err))
 }
 

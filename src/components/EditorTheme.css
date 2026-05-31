@@ -35,6 +35,10 @@
   text-align: start;
 }
 
+.editor__blocknote-container .bn-block-content:not([data-content-type="heading"]) .bn-inline-content {
+  font-size: var(--editor-font-size) !important;
+}
+
 /* Override BlockNote's default line-height on block-outer so our theme controls it */
 .editor__blocknote-container .bn-block-outer {
   line-height: var(--editor-line-height) !important;

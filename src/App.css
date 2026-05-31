@@ -20,6 +20,12 @@
   min-width: 220px;
   display: flex;
   flex-direction: column;
+  font-size: var(--custom-sidebar-font-size, 13px);
+  line-height: 1.45;
+}
+
+.app__sidebar :is(button, a, span, div, input, textarea, label, p) {
+  font-size: inherit;
 }
 
 .app__sidebar > * {
@@ -38,6 +44,12 @@
   position: relative;
   z-index: 20;
   background: var(--surface-sidebar);
+  font-size: var(--custom-note-list-font-size, 13px);
+  line-height: 1.45;
+}
+
+.app__note-list :is(button, a, span, div, input, textarea, label, p) {
+  font-size: inherit;
 }
 
 .app__note-list > * {

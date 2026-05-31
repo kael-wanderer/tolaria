@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import {
   trackNotePdfExportFailed,
   trackNotePdfExportStarted,
@@ -124,7 +125,6 @@ async function canSaveCurrentNativeWebviewPdf(): Promise<boolean> {
 }
 
 async function printCurrentNativeWebview(): Promise<void> {
-  const { invoke } = await import('@tauri-apps/api/core')
   await invoke('print_current_webview')
 }
 

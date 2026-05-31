@@ -2,6 +2,7 @@
  * AI Chat utilities — Claude CLI integration, token estimation, context building.
  */
 
+import { invoke } from '@tauri-apps/api/core'
 import type { VaultEntry } from '../types'
 import { isTauri } from '../mock-tauri'
 import { cleanupTauriEventListener } from './tauriEventCleanup'
@@ -104,7 +105,6 @@ export async function checkClaudeCli(): Promise<ClaudeCliStatus> {
   if (!isTauri()) {
     return { installed: false, version: null }
   }
-  const { invoke } = await import('@tauri-apps/api/core')
   return invoke<ClaudeCliStatus>('check_claude_cli')
 }
 
@@ -187,7 +187,6 @@ export async function streamClaudeChat(
     return 'mock-session'
   }
 
-  const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
 
   const state = { sessionId: sessionId ?? '' }

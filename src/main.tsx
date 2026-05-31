@@ -1,10 +1,12 @@
 import { lazy, StrictMode, Suspense } from 'react'
 import * as Sentry from '@sentry/react'
+import { invoke } from '@tauri-apps/api/core'
 import { createRoot } from 'react-dom/client'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import './index.css'
 import { FrontendReadyMarker } from './components/FrontendReadyMarker'
 import { LinuxTitlebar } from './components/LinuxTitlebar'
+import { applyStoredCustomAppearance } from './customization/customAppearance'
 import { applyStoredThemeMode } from './lib/themeMode'
 import {
   APP_COMMAND_EVENT_NAME,
@@ -69,6 +71,7 @@ if (isMac()) {
 }
 
 applyStoredThemeMode(document, window.localStorage)
+applyStoredCustomAppearance(document, window.localStorage)
 
 function dispatchDeterministicShortcutEvent(init: AppCommandShortcutEventInit) {
   const target =
@@ -95,7 +98,6 @@ window.__laputaTest = {
     }
 
     if ('__TAURI__' in window || '__TAURI_INTERNALS__' in window) {
-      const { invoke } = await import('@tauri-apps/api/core')
       return invoke('trigger_menu_command', { id })
     }
 

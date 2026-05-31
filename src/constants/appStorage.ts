@@ -10,6 +10,7 @@ export const APP_STORAGE_KEYS = {
   sortPreferences: 'tolaria-sort-preferences',
   sidebarCollapsed: 'tolaria:sidebar-collapsed',
   layoutPanels: 'tolaria:layout-panels',
+  customization: 'tolaria:customization',
   welcomeDismissed: 'tolaria_welcome_dismissed',
 } as const
 
