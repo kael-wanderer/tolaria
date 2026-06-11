@@ -174,6 +174,46 @@ Default to `demo-vault-v2/`. If you must use `~/Laputa/` for testing:
 
 ## 3. Reference
 
+### Architecture map (big picture)
+
+Tolaria is a **Tauri 2 desktop app**: a React 19 + TypeScript frontend (Vite) talking to a Rust backend over Tauri IPC `invoke` commands. A vault is a folder of markdown files with YAML frontmatter, and every vault is a git repo. Read `docs/ARCHITECTURE.md` and `docs/ABSTRACTIONS.md` for detail; this is the orientation.
+
+- **Rust backend (`src-tauri/src/`)** — the source of truth for the filesystem and git.
+  - `vault/` is the core: `cache.rs` (in-memory vault index), `parsing.rs`/`frontmatter.rs` (markdown + YAML), `rename.rs`/`rename_transaction.rs` (wikilink-safe renames), `views.rs`/`view_*` (saved filters), `title_sync.rs`, `trash.rs`. `vault_watcher.rs` watches the disk for external edits.
+  - `commands/` exposes IPC commands grouped by domain (`vault.rs`, `git.rs`, `ai.rs`, `system.rs`, `memory.rs`, …). `mcp.rs` + `mcp/` is the bundled MCP server.
+  - AI/CLI-agent integration is a large surface: `claude_cli.rs`, `codex_cli.rs`, `gemini_cli.rs`, `opencode_*`, `pi_*`, `kiro_*`, plus `cli_agent_runtime.rs`, `ai_models.rs`, `ai_agents.rs`.
+  - `settings.rs`, `window_state.rs`, `menu.rs`, `app_updater.rs`, `telemetry.rs` round out the app shell.
+- **React frontend (`src/`)** — `App.tsx` is the four-panel shell. `src/components/` (~300 files: editor, sidebar, note-list, inspector, AI workspace, filter-builder). `src/lib/` holds non-React logic (AI agent session/streaming, i18n, telemetry, theming) — prefer adding logic here, not in components. `src/hooks/` (~230) wraps IPC + state. The editor is **BlockNote** (ProseMirror) with CodeMirror for raw/YAML.
+- **Mock layer (`src/mock-tauri/`)** — lets the frontend run in a browser (Playwright, `pnpm dev`) without the Rust backend. It **silently swallows** real Tauri calls, so it is never a substitute for native QA.
+- **Multi-window** — note windows and the AI workspace can open as separate Tauri windows sharing state via `crossWindowPersistedStore` / `aiWorkspaceWindowSharedContext`.
+
+### Commands (cheat sheet)
+
+```bash
+pnpm dev                       # Vite frontend only (browser, uses mock-tauri)
+pnpm tauri dev                 # full native app (Rust + frontend)
+pnpm build                     # tsc -b && vite build (frontend production build)
+
+pnpm lint                      # eslint, --max-warnings=0
+npx tsc --noEmit               # typecheck
+pnpm test                      # vitest (frontend, run once)
+pnpm test:watch                # vitest watch
+pnpm test src/lib/i18n.test.ts # run a single frontend test file
+pnpm test:coverage             # frontend coverage gate (≥70%)
+
+cargo test --manifest-path src-tauri/Cargo.toml                 # all Rust tests
+cargo test --manifest-path src-tauri/Cargo.toml <name>          # single Rust test by name
+cargo llvm-cov --manifest-path src-tauri/Cargo.toml --no-clean --fail-under-lines 85
+
+pnpm playwright:smoke          # curated core-flow smoke (<5 min, runs in pre-push)
+pnpm playwright:regression     # full Playwright pass
+pnpm exec playwright test tests/smoke/<slug>.spec.ts   # single E2E spec
+
+pnpm l10n:translate            # regenerate locale files after UI copy changes
+pnpm l10n:validate             # verify locales/placeholders intact
+pnpm docs:dev                  # VitePress docs site
+```
+
 ### macOS / Tauri gotchas
 
 - `Option+N` → special chars on macOS. Use `e.code` or `Cmd+N`
