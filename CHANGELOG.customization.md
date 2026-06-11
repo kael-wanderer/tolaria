@@ -1,5 +1,18 @@
 # Customization Branch Changelog
 
+## 2026-06-11
+
+### Upstream sync
+- Synced fork onto `upstream/main` at `f6a8028e` (*fix: preserve ime punctuation and image links*), pulling **100 new upstream commits** since fork base `b84d6579`. Mostly upstream `fix:` work (IME input, tooltips, PDF previews, context menus, editor stability) plus the v2026-06-10 release.
+- Rebased the 4-commit customization layer onto the new base. Conflicts resolved at 3 known integration points (locales were the bulk):
+  - `src-tauri/tauri.conf.json` — kept `createUpdaterArtifacts: false` (updater disable) and adopted upstream's new `category: "Productivity"`.
+  - `src/utils/streamAiModel.ts` — took upstream entirely; upstream's refactor already subsumes my earlier tidy (scoped stream event names, `vaultPaths`). My change here is now a no-op.
+  - 17 locale files — took upstream's versions, then restored my 34 customization keys per locale from the pre-rebase commit `3643850c` (real translations, no API needed). Two new upstream locales (`sv-SE`, `uk-UA`) didn't exist at fork time, so their customization keys use English fallback.
+
+### Verified
+- `npx tsc --noEmit`, `pnpm lint`, `pnpm l10n:validate`
+- `pnpm test src/customization/customAppearance.test.ts src/hooks/useTheme.test.ts src/components/SettingsPanel.test.tsx` (62 passed)
+
 ## 2026-05-31
 
 ### Added
